@@ -1,3 +1,4 @@
+include ActionView::Helpers::NumberHelper
 class ApplicationController < ActionController::Base
     def home
         self.binance
@@ -28,7 +29,7 @@ class ApplicationController < ActionController::Base
                 puts usdBtc
                 
                 puts a
-                csv << [a, usdBtc, usdBtc.to_f / @btcusdt[:lastPrice].to_f, "", a, usdEth, usdEth.to_f / @ethusdt[:lastPrice].to_f]
+                csv << [a, number_to_currency(usdBtc, presicion: 2), usdBtc.to_f / @btcusdt[:lastPrice].to_f, "", a, number_to_currency(usdEth, presicion: 2), usdEth.to_f / @ethusdt[:lastPrice].to_f]
                  
             end
           
