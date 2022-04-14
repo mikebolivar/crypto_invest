@@ -104,9 +104,9 @@
                 <% eth_usd = eth_usd.to_f * (1 + @eth_int) %>
                 <tr>
                   <td>Mes <%= i %></td>
-                  <td><%= btc_usd %></td>
+                  <td><%= number_to_currency(btc_usd, precision: 2) %></td>
                   <td><%= btc_usd.to_f / @btcusdt[:lastPrice].to_f %></td>
-                  <td><%= eth_usd %></td>
+                  <td><%= number_to_currency(eth_usd, precision: 2) %></td>
                   <td><%= eth_usd.to_f / @btcusdt[:lastPrice].to_f %></td>
                 </tr>
                 <% end %>
