@@ -1,23 +1,39 @@
 class ApplicationController < ActionController::Base
     def home
-        @btcusdt = Binance::Api.ticker!(symbol: 'BTCUSDT', type: :daily)
-        @ethusdt = Binance::Api.ticker!(symbol: 'ETHUSDT', type: :daily)
+        self.binance
     end
 
-    def home2
-        on_open = ->(event) { puts '>> Websocket opened' }
-        on_close = ->(event) { puts ">> Websocket closed (#{event.code}): #{event.reason}" }
-        EM.run do
-        websocket = Binance::WebSocket.new(on_open: on_open, on_close: on_close)
+    def report
+        self.binance
+        csv_string = CSV.generate do |csv|
+            cols1 = ["BTC", @btcusdt[:lastPrice]]
+            cols2 = ["ETH", @ethusdt[:lastPrice]]
+            cols3 = ["Tabla BTC", "", "", "", "TABLA ETH"]
+            cols = ["Mes", "USD", "BTC", "","Mes", "USD", "ETH"]
+            csv << cols1
+            csv << cols2
+            csv << cols3
+            csv << cols
+            usdBtc = params[:amount]
+            usdEth = params[:amount]
+            
+            for a in 1..12 do
+                usdBtc = usdBtc.to_f * 1.05 
+                usdEth = usdEth.to_f * 1.03
+                puts usdBtc
+                
+                puts a
+                csv << [a, usdBtc, usdBtc.to_f / @btcusdt[:lastPrice].to_f, "", a, usdEth, usdEth.to_f / @ethusdt[:lastPrice].to_f]
+                 
+            end
+          
+            @filename = "data-#{Time.now.to_date.to_s}.csv"  
+          end
+        send_data(csv_string, :type => 'text/csv; charset=utf-8; header=present', :filename => @filename)  
+    end
 
-        websocket.candlesticks!(%w[BTCUSDT], '1m') do |stream_name, kline_candlestick|
-            symbol = kline_candlestick[:s]
-            price = kline_candlestick[:p]
-            puts symbol
-            puts stream_name
-            print kline_candlestick
-        end
-        end
-        print Binance::Api.ping!
+    def binance
+        @btcusdt = Binance::Api.ticker!(symbol: 'BTCUSDT', type: :daily)
+        @ethusdt = Binance::Api.ticker!(symbol: 'ETHUSDT', type: :daily)
     end
 end
