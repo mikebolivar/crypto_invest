@@ -1,15 +1,20 @@
 class ApplicationController < ActionController::Base
     def home
         self.binance
+        if request.POST.include? "amount"
+            @amount = params[:amount]
+        end
     end
 
     def report
         self.binance
         csv_string = CSV.generate do |csv|
+            cols0 = ["Monto", params[:amount]]
             cols1 = ["BTC", @btcusdt[:lastPrice]]
             cols2 = ["ETH", @ethusdt[:lastPrice]]
             cols3 = ["Tabla BTC", "", "", "", "TABLA ETH"]
             cols = ["Mes", "USD", "BTC", "","Mes", "USD", "ETH"]
+            csv << cols0
             csv << cols1
             csv << cols2
             csv << cols3
@@ -18,8 +23,8 @@ class ApplicationController < ActionController::Base
             usdEth = params[:amount]
             
             for a in 1..12 do
-                usdBtc = usdBtc.to_f * 1.05 
-                usdEth = usdEth.to_f * 1.03
+                usdBtc = usdBtc.to_f * (1 + @btc_int) 
+                usdEth = usdEth.to_f * (1 + @eth_int)
                 puts usdBtc
                 
                 puts a
@@ -33,6 +38,8 @@ class ApplicationController < ActionController::Base
     end
 
     def binance
+        @btc_int = 0.05
+        @eth_int = 0.03
         @btcusdt = Binance::Api.ticker!(symbol: 'BTCUSDT', type: :daily)
         @ethusdt = Binance::Api.ticker!(symbol: 'ETHUSDT', type: :daily)
     end
