@@ -18,5 +18,8 @@ module Testapp
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    Binance::Api::Configuration.api_key = "n6nZMucKJyjOcHWUeY1DpCflOYBHjzBUA2fdUMs5LIcP9OpnczpTpveb0tBqD9YM"
+    Binance::Api::Configuration.secret_key = "X9eiBsNhfJK2RWgnEK29pJ1FeAdkmaUlS71YF54k6LUEXPUgJ5iMRMq7YLpea2U6"
+
   end
 end
